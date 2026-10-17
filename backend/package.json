@@ -1,8 +1,14 @@
 {
   "name": "devspace_nodejs",
-  "module": "src/index.ts",
   "type": "module",
+  "version": "1.0.0",
   "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
   "devDependencies": {
     "@types/node": "^26.6.5",
     "tsx": "^4.23.15",

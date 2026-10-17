@@ -17,7 +17,7 @@
 
     "rootDir": "src",
     "outDir": "dist",
-    "noEmit": true
+    "noEmit": false
   },
   "include": ["src/**/*"]
 }

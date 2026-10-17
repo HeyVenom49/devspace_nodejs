@@ -6,10 +6,20 @@ To install dependencies:
 bun install
 ```
 
-To run:
+To build TypeScript -> JavaScript (`dist/`):
 
 ```bash
-bun run src/index.ts
+bun run build
 ```
 
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+To the compiled app:
+
+```bash
+bun run start
+```
+
+For local development without building (run TypeScript directly):
+
+```bash
+bun run dev
+```
