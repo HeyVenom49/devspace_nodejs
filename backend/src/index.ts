@@ -11,8 +11,12 @@ const server = http.createServer((req, res) => {
       }),
     );
   } else {
-    res.write("Wrong path");
-    res.end();
+    res.writeHead(400, { "Content-type": "application/json" });
+    res.end(
+      JSON.stringify({
+        data: "invalid path",
+      }),
+    );
   }
 });
 
