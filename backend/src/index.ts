@@ -5,13 +5,13 @@ const PORT = 4000;
 const server = http.createServer((req, res) => {
   const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
 
-  if (req.method === "GET" && req.url === "/health") {
-    const name = url.searchParams.get("verbose"); // null if missing
+  if (req.method === "GET" && url.pathname === "/health") {
+    const verbose = url.searchParams.get("verbose"); // null if missing
     res.writeHead(200, { "Content-type": "application/json" });
     res.end(
       JSON.stringify({
         data: "Server is healthy",
-        name, // e.g. "true" for /health?verbose=true
+        verbose, // e.g. "true" for /health?verbose=true
       }),
     );
     return;
