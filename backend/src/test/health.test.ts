@@ -50,12 +50,12 @@ test("GET /health?verbose=true", async () => {
   });
 });
 
-test("POST /health returns 200 and healthy message", async () => {
+test("POST /health returns 404", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/health`, { method: "POST" });
     const body = (await res.json()) as HealthBody;
 
-    assert.equal(res.status, 200);
-    assert.equal(body.data, "Server is healthy");
+    assert.equal(res.status, 404);
+    assert.equal(body.data, "invalid path");
   });
 });
