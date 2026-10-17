@@ -38,3 +38,14 @@ test("unknown path returns 404", async () => {
     assert.equal(body.data, "invalid path");
   });
 });
+
+test("GET /health?verbose=true", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/health?verbose=true`);
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 200);
+    assert.equal(body.data, "Server is healthy");
+    assert.equal(body.verbose, "true");
+  });
+});
