@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => {
       }),
     );
   } else {
-    res.writeHead(400, { "Content-type": "application/json" });
+    res.writeHead(404, { "Content-type": "application/json" });
     res.end(
       JSON.stringify({
         data: "invalid path",
