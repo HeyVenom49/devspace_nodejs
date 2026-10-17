@@ -49,3 +49,13 @@ test("GET /health?verbose=true", async () => {
     assert.equal(body.verbose, "true");
   });
 });
+
+test("POST /health returns 200 and healthy message", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/health`, { method: "POST" });
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 200);
+    assert.equal(body.data, "Server is healthy");
+  });
+});
