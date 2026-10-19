@@ -11,14 +11,6 @@ export function createApp() {
     const isRead = req.method === "GET" || req.method === "HEAD";
 
     if (isHealth && isRead) {
-      // HEAD: headers only - Node will omit body if you end without data
-      if (req.method === "HEAD") {
-        res.writeHead(200, {
-          "Content-type": "application/json",
-        });
-        res.end(); // no body string, no JSON.stringfy
-        return;
-      }
       const verbose = url.searchParams.get("verbose"); // null if missing
       const body = JSON.stringify({
         data: "Server is healthy",
@@ -28,6 +20,11 @@ export function createApp() {
         "Content-type": "application/json",
         "Content-Length": Buffer.byteLength(body),
       });
+      // HEAD: headers only - Node will omit body if you end without data
+      if (req.method === "HEAD") {
+        res.end(); // no body string
+        return;
+      }
       res.end(body);
       return;
     }
