@@ -73,6 +73,30 @@ test("GET /health?verbose=yes returns 400", async () => {
   });
 });
 
+test("GET /health with verbose twice returns 400", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(
+      `${baseUrl}/health?verbose=true&verbose=false`,
+    );
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 400);
+    assert.equal(body.data, "verbose must be provided only once");
+  });
+});
+
+test("GET /health with verbose=true twice returns 400", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(
+      `${baseUrl}/health?verbose=true&verbose=true`,
+    );
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 400);
+    assert.equal(body.data, "verbose must be provided only once");
+  });
+});
+
 test("POST /health returns 405", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/health`, { method: "POST" });

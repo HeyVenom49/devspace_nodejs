@@ -11,7 +11,15 @@ export function createApp() {
     const isRead = req.method === "GET" || req.method === "HEAD";
 
     if (isHealth && isRead) {
-      const verboseParam = url.searchParams.get("verbose"); // null if missing
+      const verboseValues = url.searchParams.getAll("verbose");
+
+      if (verboseValues.length > 1) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ data: "verbose must be provided only once" }));
+        return;
+      }
+
+      const verboseParam = verboseValues[0] ?? null;
       if (
         verboseParam !== null &&
         verboseParam !== "true" &&
