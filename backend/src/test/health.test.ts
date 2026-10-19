@@ -57,5 +57,6 @@ test("POST /health returns 405", async () => {
 
     assert.equal(res.status, 405);
     assert.equal(body.data, "Method not allowed");
+    assert.equal(res.headers.get("allow"), "GET"); // <- yeh check
   });
 });

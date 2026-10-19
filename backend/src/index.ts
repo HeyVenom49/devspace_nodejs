@@ -19,8 +19,8 @@ export function createApp() {
       return;
     }
 
-    if (url.pathname === "/health" && !(req.method === "GET")) {
-      res.writeHead(405, { "Content-Type": "application/json" });
+    if (url.pathname === "/health" && req.method !== "GET") {
+      res.writeHead(405, { "Content-Type": "application/json", allow: "GET" });
       res.end(JSON.stringify({ data: "Method not allowed" }));
       return;
     }
