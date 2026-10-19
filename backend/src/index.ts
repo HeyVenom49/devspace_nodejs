@@ -11,7 +11,18 @@ export function createApp() {
     const isRead = req.method === "GET" || req.method === "HEAD";
 
     if (isHealth && isRead) {
-      const verbose = url.searchParams.get("verbose"); // null if missing
+      const verboseParam = url.searchParams.get("verbose"); // null if missing
+      if (
+        verboseParam !== null &&
+        verboseParam !== "true" &&
+        verboseParam !== "false"
+      ) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ data: "verbose must be true or false" }));
+        return;
+      }
+
+      const verbose = verboseParam === "true";
       const body = JSON.stringify({
         data: "Server is healthy",
         verbose, // e.g. "true" for /health?verbose=true

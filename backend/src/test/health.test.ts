@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
 import { createApp } from "../index.js";
 
-type HealthBody = { data: string; verbose?: string | null };
+type HealthBody = { data: string; verbose?: boolean };
 
 async function withServer(run: (baseUrl: string) => Promise<void>) {
   const server = createApp();
@@ -26,6 +26,7 @@ test("GET /health returns 200 and healthy message", async () => {
 
     assert.equal(res.status, 200);
     assert.equal(body.data, "Server is healthy");
+    assert.equal(body.verbose, false);
   });
 });
 
@@ -39,14 +40,36 @@ test("unknown path returns 404", async () => {
   });
 });
 
-test("GET /health?verbose=true", async () => {
+test("GET /health?verbose=true returns boolean true", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/health?verbose=true`);
     const body = (await res.json()) as HealthBody;
 
     assert.equal(res.status, 200);
     assert.equal(body.data, "Server is healthy");
-    assert.equal(body.verbose, "true");
+    assert.equal(body.verbose, true);
+    assert.equal(typeof body.verbose, "boolean");
+  });
+});
+
+test("GET /health?verbose=false returns boolean false", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/health?verbose=false`);
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 200);
+    assert.equal(body.verbose, false);
+    assert.equal(typeof body.verbose, "boolean");
+  });
+});
+
+test("GET /health?verbose=yes returns 400", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/health?verbose=yes`);
+    const body = (await res.json()) as HealthBody;
+
+    assert.equal(res.status, 400);
+    assert.equal(body.data, "verbose must be true or false");
   });
 });
 
