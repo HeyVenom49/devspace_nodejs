@@ -7,20 +7,34 @@ export function createApp() {
   return http.createServer((req, res) => {
     const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
 
-    if (req.method === "GET" && url.pathname === "/health") {
+    const isHealth = url.pathname === "/health";
+    const isRead = req.method === "GET" || req.method === "HEAD";
+
+    if (isHealth && isRead) {
       const verbose = url.searchParams.get("verbose"); // null if missing
-      res.writeHead(200, { "Content-type": "application/json" });
-      res.end(
-        JSON.stringify({
-          data: "Server is healthy",
-          verbose, // e.g. "true" for /health?verbose=true
-        }),
-      );
+      const body = JSON.stringify({
+        data: "Server is healthy",
+        verbose, // e.g. "true" for /health?verbose=true
+      });
+      res.writeHead(200, {
+        "Content-type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+      });
+
+      // HEAD: headers only - Node will omit body if you end without data
+      if (req.method === "HEAD") {
+        res.end();
+        return;
+      }
+      res.end(body);
       return;
     }
 
-    if (url.pathname === "/health" && req.method !== "GET") {
-      res.writeHead(405, { "Content-Type": "application/json", allow: "GET" });
+    if (isHealth && !isRead) {
+      res.writeHead(405, {
+        "Content-Type": "application/json",
+        allow: "GET, HEAD",
+      });
       res.end(JSON.stringify({ data: "Method not allowed" }));
       return;
     }

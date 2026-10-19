@@ -57,6 +57,17 @@ test("POST /health returns 405", async () => {
 
     assert.equal(res.status, 405);
     assert.equal(body.data, "Method not allowed");
-    assert.equal(res.headers.get("allow"), "GET"); // <- yeh check
+    assert.equal(res.headers.get("allow"), "GET, HEAD"); // <- yeh check
+  });
+});
+
+test("HEAD /health return 200 with no body", async () => {
+  await withServer(async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/health`, { method: "HEAD" });
+    const text = await res.text();
+
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("content-type"), "application/json");
+    assert.equal(text, ""); // no body
   });
 });
