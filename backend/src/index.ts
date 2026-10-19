@@ -13,7 +13,10 @@ export function createApp() {
     if (isHealth && isRead) {
       // HEAD: headers only - Node will omit body if you end without data
       if (req.method === "HEAD") {
-        res.end();
+        res.writeHead(200, {
+          "Content-type": "application/json",
+        });
+        res.end(); // no body string, no JSON.stringfy
         return;
       }
       const verbose = url.searchParams.get("verbose"); // null if missing
