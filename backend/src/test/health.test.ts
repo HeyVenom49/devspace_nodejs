@@ -4,6 +4,7 @@ import type { AddressInfo } from "node:net";
 import { createApp } from "../index.js";
 
 type HealthBody = { data: string; verbose?: boolean };
+type ErrorBody = { error: { message: string } };
 
 async function withServer(run: (baseUrl: string) => Promise<void>) {
   const server = createApp();
@@ -33,10 +34,10 @@ test("GET /health returns 200 and healthy message", async () => {
 test("unknown path returns 404", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/nope`);
-    const body = (await res.json()) as HealthBody;
+    const body = (await res.json()) as ErrorBody;
 
     assert.equal(res.status, 404);
-    assert.equal(body.data, "invalid path");
+    assert.equal(body.error.message, "invalid path");
   });
 });
 
@@ -66,10 +67,10 @@ test("GET /health?verbose=false returns boolean false", async () => {
 test("GET /health?verbose=yes returns 400", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/health?verbose=yes`);
-    const body = (await res.json()) as HealthBody;
+    const body = (await res.json()) as ErrorBody;
 
     assert.equal(res.status, 400);
-    assert.equal(body.data, "verbose must be true or false");
+    assert.equal(body.error.message, "verbose must be true or false");
   });
 });
 
@@ -78,10 +79,10 @@ test("GET /health with verbose twice returns 400", async () => {
     const res = await fetch(
       `${baseUrl}/health?verbose=true&verbose=false`,
     );
-    const body = (await res.json()) as HealthBody;
+    const body = (await res.json()) as ErrorBody;
 
     assert.equal(res.status, 400);
-    assert.equal(body.data, "verbose must be provided only once");
+    assert.equal(body.error.message, "verbose must be provided only once");
   });
 });
 
@@ -90,21 +91,21 @@ test("GET /health with verbose=true twice returns 400", async () => {
     const res = await fetch(
       `${baseUrl}/health?verbose=true&verbose=true`,
     );
-    const body = (await res.json()) as HealthBody;
+    const body = (await res.json()) as ErrorBody;
 
     assert.equal(res.status, 400);
-    assert.equal(body.data, "verbose must be provided only once");
+    assert.equal(body.error.message, "verbose must be provided only once");
   });
 });
 
 test("POST /health returns 405", async () => {
   await withServer(async (baseUrl) => {
     const res = await fetch(`${baseUrl}/health`, { method: "POST" });
-    const body = (await res.json()) as HealthBody;
+    const body = (await res.json()) as ErrorBody;
 
     assert.equal(res.status, 405);
-    assert.equal(body.data, "Method not allowed");
-    assert.equal(res.headers.get("allow"), "GET, HEAD"); // <- yeh check
+    assert.equal(body.error.message, "Method not allowed");
+    assert.equal(res.headers.get("allow"), "GET, HEAD");
   });
 });
 
