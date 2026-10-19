@@ -12,7 +12,7 @@ To build TypeScript -> JavaScript (`dist/`):
 bun run build
 ```
 
-To the compiled app:
+To run the compiled app:
 
 ```bash
 bun run start
