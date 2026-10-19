@@ -17,7 +17,10 @@ export function createApp() {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(
           JSON.stringify({
-            error: { message: "verbose must be provided only once" },
+            error: {
+              message: "verbose must be provided only once",
+              status: 400,
+            },
           }),
         );
         return;
@@ -32,7 +35,7 @@ export function createApp() {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(
           JSON.stringify({
-            error: { message: "verbose must be true or false" },
+            error: { message: "verbose must be true or false", status: 400 },
           }),
         );
         return;
@@ -64,13 +67,19 @@ export function createApp() {
         Allow: "GET, HEAD",
       });
       res.end(
-        JSON.stringify({ error: { message: "Method not allowed" } }),
+        JSON.stringify({
+          error: { message: "Method not allowed", status: 405 },
+        }),
       );
       return;
     }
 
     res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: { message: "invalid path" } }));
+    res.end(
+      JSON.stringify({
+        error: { message: "invalid path", status: 404 },
+      }),
+    );
   });
 }
 

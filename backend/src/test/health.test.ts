@@ -4,7 +4,7 @@ import type { AddressInfo } from "node:net";
 import { createApp } from "../index.js";
 
 type HealthBody = { data: string; verbose?: boolean };
-type ErrorBody = { error: { message: string } };
+type ErrorBody = { error: { message: string; status: number } };
 
 async function withServer(run: (baseUrl: string) => Promise<void>) {
   const server = createApp();
@@ -38,6 +38,7 @@ test("unknown path returns 404", async () => {
 
     assert.equal(res.status, 404);
     assert.equal(body.error.message, "invalid path");
+    assert.equal(body.error.status, 404);
   });
 });
 
@@ -71,6 +72,7 @@ test("GET /health?verbose=yes returns 400", async () => {
 
     assert.equal(res.status, 400);
     assert.equal(body.error.message, "verbose must be true or false");
+    assert.equal(body.error.status, 400);
   });
 });
 
@@ -83,6 +85,7 @@ test("GET /health with verbose twice returns 400", async () => {
 
     assert.equal(res.status, 400);
     assert.equal(body.error.message, "verbose must be provided only once");
+    assert.equal(body.error.status, 400);
   });
 });
 
@@ -95,6 +98,7 @@ test("GET /health with verbose=true twice returns 400", async () => {
 
     assert.equal(res.status, 400);
     assert.equal(body.error.message, "verbose must be provided only once");
+    assert.equal(body.error.status, 400);
   });
 });
 
@@ -105,6 +109,7 @@ test("POST /health returns 405", async () => {
 
     assert.equal(res.status, 405);
     assert.equal(body.error.message, "Method not allowed");
+    assert.equal(body.error.status, 405);
     assert.equal(res.headers.get("allow"), "GET, HEAD");
   });
 });
